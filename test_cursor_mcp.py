@@ -8,12 +8,14 @@ from pathlib import Path
 def test_mcp_connection():
     """Test the MCP connection to the word counter service."""
     # Load MCP configuration
-    with open('cursor-mcp.json', 'r') as f:
+    with open('.cursor/mcp.json', 'r') as f:
         config = json.load(f)
     
-    base_url = config['transport']['base_url']
-    headers = config['transport']['headers']
-    endpoint = config['commands']['count']['endpoint']
+    # Get the word-counter server configuration
+    server_config = config['mcpServers']['word-counter']
+    base_url = server_config['transport']['base_url']
+    headers = server_config['transport']['headers']
+    endpoint = server_config['commands']['count']['endpoint']
     
     # Test cases
     test_cases = [

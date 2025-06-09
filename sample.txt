@@ -1,7 +1,7 @@
 Hello, this is a sample text file.
-It contains multiple lines of text.
-Each line has different number of words.
-This file will be used to test our word counter script.
+It has multiple lines.
+Each line contains some words.
+This file will be used for testing the word counter service.
 The script should count:
 - Lines
 - Words

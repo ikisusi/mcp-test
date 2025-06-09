@@ -6,10 +6,98 @@ import argparse
 from pathlib import Path
 from typing import Dict, Any
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)  # Enable CORS for all routes
 API_KEY = None
 DEFAULT_PORT = 55000  # Changed from 5000 to avoid AirPlay conflicts
+
+# Register routes
+@app.route('/', methods=['GET', 'POST'])
+def root():
+    return jsonify({
+        "mcpServers": {
+            "word-counter": {
+                "name": "word-counter",
+                "version": "1.0.0",
+                "description": "Cursor MCP client configuration for word counter service",
+                "url": "http://localhost:55000",
+                "transport": {
+                    "type": "http",
+                    "base_url": "http://localhost:55000",
+                    "headers": {
+                        "Content-Type": "application/json",
+                        "X-API-Key": "test-key-123"
+                    }
+                },
+                "commands": {
+                    "count": {
+                        "endpoint": "/count",
+                        "method": "POST",
+                        "description": "Count lines, words, and characters in a text file",
+                        "request_schema": {
+                            "type": "object",
+                            "required": ["file_path"],
+                            "properties": {
+                                "file_path": {
+                                    "type": "string",
+                                    "description": "Path to the text file to analyze"
+                                }
+                            }
+                        },
+                        "response_schema": {
+                            "type": "object",
+                            "properties": {
+                                "result": {
+                                    "type": "object",
+                                    "properties": {
+                                        "lines": {
+                                            "type": "integer",
+                                            "description": "Number of lines in the file"
+                                        },
+                                        "words": {
+                                            "type": "integer",
+                                            "description": "Number of words in the file"
+                                        },
+                                        "characters": {
+                                            "type": "integer",
+                                            "description": "Number of characters in the file"
+                                        }
+                                    }
+                                },
+                                "error": {
+                                    "type": "string",
+                                    "description": "Error message if the request failed"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    })
+
+@app.route('/count', methods=['POST'])
+def count():
+    # Check API key if set
+    if API_KEY:
+        auth_header = request.headers.get('X-API-Key')
+        if not auth_header or auth_header != API_KEY:
+            return jsonify({'error': 'Invalid API key'}), 401
+
+    # Get request data
+    data = request.get_json()
+    if not data or 'file_path' not in data:
+        return jsonify({'error': 'Missing file_path in request'}), 400
+
+    try:
+        stats = count_file_stats(data['file_path'])
+        return jsonify({'result': stats})
+    except FileNotFoundError as fnf:
+        return jsonify({'error': str(fnf)}), 500
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 def count_file_stats(file_path: str) -> Dict[str, int]:
     """
@@ -89,29 +177,8 @@ def run_http_server():
     """
     Run the word counter as an HTTP server.
     """
-    @app.route('/count', methods=['POST'])
-    def count():
-        # Check API key if set
-        if API_KEY:
-            auth_header = request.headers.get('X-API-Key')
-            if not auth_header or auth_header != API_KEY:
-                return jsonify({'error': 'Invalid API key'}), 401
-
-        # Get request data
-        data = request.get_json()
-        if not data or 'file_path' not in data:
-            return jsonify({'error': 'Missing file_path in request'}), 400
-
-        try:
-            stats = count_file_stats(data['file_path'])
-            return jsonify({'result': stats})
-        except FileNotFoundError as fnf:
-            return jsonify({'error': str(fnf)}), 500
-        except Exception as e:
-            return jsonify({'error': str(e)}), 500
-
     # Run the Flask app
-    app.run(host='0.0.0.0', port=DEFAULT_PORT)
+    app.run(host='0.0.0.0', port=DEFAULT_PORT, debug=True)
 
 def main():
     parser = argparse.ArgumentParser(description='Count lines, words, and characters in a text file')
