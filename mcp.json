@@ -1,0 +1,143 @@
+{
+    "name": "word-counter",
+    "version": "1.0.0",
+    "description": "A service that counts lines, words, and characters in text files",
+    "transports": {
+        "stdin": {
+            "type": "json",
+            "description": "JSON-based transport over stdin/stdout",
+            "request": {
+                "type": "object",
+                "required": ["file_path"],
+                "properties": {
+                    "file_path": {
+                        "type": "string",
+                        "description": "Path to the text file to analyze"
+                    }
+                }
+            },
+            "response": {
+                "type": "object",
+                "properties": {
+                    "result": {
+                        "type": "object",
+                        "properties": {
+                            "lines": {
+                                "type": "integer",
+                                "description": "Number of lines in the file"
+                            },
+                            "words": {
+                                "type": "integer",
+                                "description": "Number of words in the file"
+                            },
+                            "characters": {
+                                "type": "integer",
+                                "description": "Number of characters in the file"
+                            }
+                        }
+                    },
+                    "error": {
+                        "type": "string",
+                        "description": "Error message if the request failed"
+                    }
+                }
+            }
+        },
+        "http": {
+            "type": "http",
+            "description": "HTTP-based transport with API key authentication",
+            "endpoints": {
+                "/count": {
+                    "method": "POST",
+                    "description": "Count statistics for a text file",
+                    "headers": {
+                        "Content-Type": "application/json",
+                        "X-API-Key": {
+                            "type": "string",
+                            "description": "API key for authentication"
+                        }
+                    },
+                    "request": {
+                        "type": "object",
+                        "required": ["file_path"],
+                        "properties": {
+                            "file_path": {
+                                "type": "string",
+                                "description": "Path to the text file to analyze"
+                            }
+                        }
+                    },
+                    "response": {
+                        "type": "object",
+                        "properties": {
+                            "result": {
+                                "type": "object",
+                                "properties": {
+                                    "lines": {
+                                        "type": "integer",
+                                        "description": "Number of lines in the file"
+                                    },
+                                    "words": {
+                                        "type": "integer",
+                                        "description": "Number of words in the file"
+                                    },
+                                    "characters": {
+                                        "type": "integer",
+                                        "description": "Number of characters in the file"
+                                    }
+                                }
+                            },
+                            "error": {
+                                "type": "string",
+                                "description": "Error message if the request failed"
+                            }
+                        }
+                    },
+                    "status_codes": {
+                        "200": "Success",
+                        "400": "Bad Request - Missing or invalid file_path",
+                        "401": "Unauthorized - Invalid or missing API key",
+                        "500": "Internal Server Error"
+                    }
+                }
+            }
+        }
+    },
+    "examples": {
+        "stdin": {
+            "request": {
+                "file_path": "sample.txt"
+            },
+            "response": {
+                "result": {
+                    "lines": 10,
+                    "words": 46,
+                    "characters": 247
+                }
+            }
+        },
+        "http": {
+            "request": {
+                "method": "POST",
+                "url": "http://localhost:55000/count",
+                "headers": {
+                    "Content-Type": "application/json",
+                    "X-API-Key": "your-api-key"
+                },
+                "body": {
+                    "file_path": "sample.txt"
+                }
+            },
+            "response": {
+                "status": 200,
+                "body": {
+                    "result": {
+                        "lines": 10,
+                        "words": 46,
+                        "characters": 247
+                    }
+                }
+            }
+        }
+    }
+} 
