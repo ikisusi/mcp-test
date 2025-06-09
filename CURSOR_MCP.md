@@ -19,7 +19,7 @@ This document explains how to use the Word Counter service with Cursor's MCP (Ma
    ```
    The service will start on `http://localhost:55000`.
 
-2. The `cursor-mcp.json` file is already configured with:
+2. The MCP configuration file is located in the `.cursor` directory as `mcp.json`. It is already configured with:
    - Base URL: `http://localhost:55000`
    - API Key: `test-key-123`
    - Endpoint: `/count`

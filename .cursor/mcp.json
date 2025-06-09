@@ -1,0 +1,56 @@
+{
+    "name": "word-counter-cursor",
+    "version": "1.0.0",
+    "description": "Cursor MCP client configuration for word counter service",
+    "transport": {
+        "type": "http",
+        "base_url": "http://localhost:55000",
+        "headers": {
+            "Content-Type": "application/json",
+            "X-API-Key": "test-key-123"
+        }
+    },
+    "commands": {
+        "count": {
+            "endpoint": "/count",
+            "method": "POST",
+            "description": "Count lines, words, and characters in a text file",
+            "request_schema": {
+                "type": "object",
+                "required": ["file_path"],
+                "properties": {
+                    "file_path": {
+                        "type": "string",
+                        "description": "Path to the text file to analyze"
+                    }
+                }
+            },
+            "response_schema": {
+                "type": "object",
+                "properties": {
+                    "result": {
+                        "type": "object",
+                        "properties": {
+                            "lines": {
+                                "type": "integer",
+                                "description": "Number of lines in the file"
+                            },
+                            "words": {
+                                "type": "integer",
+                                "description": "Number of words in the file"
+                            },
+                            "characters": {
+                                "type": "integer",
+                                "description": "Number of characters in the file"
+                            }
+                        }
+                    },
+                    "error": {
+                        "type": "string",
+                        "description": "Error message if the request failed"
+                    }
+                }
+            }
+        }
+    }
+} 
