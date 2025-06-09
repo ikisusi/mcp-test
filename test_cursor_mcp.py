@@ -13,9 +13,13 @@ def test_mcp_connection():
     
     # Get the word-counter server configuration
     server_config = config['mcpServers']['word-counter']
-    base_url = server_config['transport']['base_url']
-    headers = server_config['transport']['headers']
-    endpoint = server_config['commands']['count']['endpoint']
+    base_url = server_config['url']
+    
+    # Default headers
+    headers = {
+        "Content-Type": "application/json",
+        "X-API-Key": "test-key-123"
+    }
     
     # Test cases
     test_cases = [
@@ -56,7 +60,7 @@ def test_mcp_connection():
         try:
             # Make request
             response = requests.post(
-                f"{base_url}{endpoint}",
+                f"{base_url}/count",
                 headers=test_headers,
                 json=body
             )
