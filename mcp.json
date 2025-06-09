@@ -105,36 +105,142 @@
     },
     "examples": {
         "stdin": {
-            "request": {
-                "file_path": "sample.txt"
-            },
-            "response": {
-                "result": {
-                    "lines": 10,
-                    "words": 46,
-                    "characters": 247
-                }
-            }
-        },
-        "http": {
-            "request": {
-                "method": "POST",
-                "url": "http://localhost:55000/count",
-                "headers": {
-                    "Content-Type": "application/json",
-                    "X-API-Key": "your-api-key"
-                },
-                "body": {
+            "basic": {
+                "description": "Basic file analysis",
+                "request": {
                     "file_path": "sample.txt"
-                }
-            },
-            "response": {
-                "status": 200,
-                "body": {
+                },
+                "response": {
                     "result": {
                         "lines": 10,
                         "words": 46,
                         "characters": 247
+                    }
+                }
+            },
+            "error_missing_file": {
+                "description": "Error when file doesn't exist",
+                "request": {
+                    "file_path": "nonexistent.txt"
+                },
+                "response": {
+                    "error": "File 'nonexistent.txt' not found"
+                }
+            },
+            "error_invalid_json": {
+                "description": "Error when input is not valid JSON",
+                "request": "invalid json content",
+                "response": {
+                    "error": "Invalid JSON input"
+                }
+            },
+            "error_missing_path": {
+                "description": "Error when file_path is missing",
+                "request": {},
+                "response": {
+                    "error": "Missing file_path in request"
+                }
+            }
+        },
+        "http": {
+            "basic": {
+                "description": "Basic file analysis with API key",
+                "request": {
+                    "method": "POST",
+                    "url": "http://localhost:55000/count",
+                    "headers": {
+                        "Content-Type": "application/json",
+                        "X-API-Key": "test-key-123"
+                    },
+                    "body": {
+                        "file_path": "sample.txt"
+                    }
+                },
+                "response": {
+                    "status": 200,
+                    "body": {
+                        "result": {
+                            "lines": 10,
+                            "words": 46,
+                            "characters": 247
+                        }
+                    }
+                }
+            },
+            "error_invalid_api_key": {
+                "description": "Error when API key is invalid",
+                "request": {
+                    "method": "POST",
+                    "url": "http://localhost:55000/count",
+                    "headers": {
+                        "Content-Type": "application/json",
+                        "X-API-Key": "wrong-key"
+                    },
+                    "body": {
+                        "file_path": "sample.txt"
+                    }
+                },
+                "response": {
+                    "status": 401,
+                    "body": {
+                        "error": "Invalid API key"
+                    }
+                }
+            },
+            "error_missing_api_key": {
+                "description": "Error when API key is missing",
+                "request": {
+                    "method": "POST",
+                    "url": "http://localhost:55000/count",
+                    "headers": {
+                        "Content-Type": "application/json"
+                    },
+                    "body": {
+                        "file_path": "sample.txt"
+                    }
+                },
+                "response": {
+                    "status": 401,
+                    "body": {
+                        "error": "Invalid API key"
+                    }
+                }
+            },
+            "error_missing_file_path": {
+                "description": "Error when file_path is missing",
+                "request": {
+                    "method": "POST",
+                    "url": "http://localhost:55000/count",
+                    "headers": {
+                        "Content-Type": "application/json",
+                        "X-API-Key": "test-key-123"
+                    },
+                    "body": {}
+                },
+                "response": {
+                    "status": 400,
+                    "body": {
+                        "error": "Missing file_path in request"
+                    }
+                }
+            },
+            "error_file_not_found": {
+                "description": "Error when file doesn't exist",
+                "request": {
+                    "method": "POST",
+                    "url": "http://localhost:55000/count",
+                    "headers": {
+                        "Content-Type": "application/json",
+                        "X-API-Key": "test-key-123"
+                    },
+                    "body": {
+                        "file_path": "nonexistent.txt"
+                    }
+                },
+                "response": {
+                    "status": 500,
+                    "body": {
+                        "error": "File 'nonexistent.txt' not found"
                     }
                 }
             }
