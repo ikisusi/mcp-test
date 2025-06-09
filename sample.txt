@@ -1,0 +1,10 @@
+Hello, this is a sample text file.
+It contains multiple lines of text.
+Each line has different number of words.
+This file will be used to test our word counter script.
+The script should count:
+- Lines
+- Words
+- Characters
+
+Let's see how it works! 
