@@ -33,11 +33,9 @@ def count_file_stats(file_path: str) -> Dict[str, int]:
         
         return stats
     except FileNotFoundError:
-        print(f"Error: File '{file_path}' not found.", file=sys.stderr)
-        sys.exit(1)
+        raise FileNotFoundError(f"File '{file_path}' not found")
     except Exception as e:
-        print(f"Error: {str(e)}", file=sys.stderr)
-        sys.exit(1)
+        raise Exception(str(e))
 
 def run_mcp_server():
     """
@@ -59,11 +57,16 @@ def run_mcp_server():
                     'error': 'Missing file_path in request'
                 }
             else:
-                # Process the file and get stats
-                stats = count_file_stats(request['file_path'])
-                response = {
-                    'result': stats
-                }
+                try:
+                    # Process the file and get stats
+                    stats = count_file_stats(request['file_path'])
+                    response = {
+                        'result': stats
+                    }
+                except FileNotFoundError as fnf:
+                    response = {'error': str(fnf)}
+                except Exception as e:
+                    response = {'error': str(e)}
             
             # Send the response
             print(json.dumps(response))
@@ -102,6 +105,8 @@ def run_http_server():
         try:
             stats = count_file_stats(data['file_path'])
             return jsonify({'result': stats})
+        except FileNotFoundError as fnf:
+            return jsonify({'error': str(fnf)}), 500
         except Exception as e:
             return jsonify({'error': str(e)}), 500
 
