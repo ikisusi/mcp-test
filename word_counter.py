@@ -9,6 +9,7 @@ from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 API_KEY = None
+DEFAULT_PORT = 55000  # Changed from 5000 to avoid AirPlay conflicts
 
 def count_file_stats(file_path: str) -> Dict[str, int]:
     """
@@ -105,7 +106,7 @@ def run_http_server():
             return jsonify({'error': str(e)}), 500
 
     # Run the Flask app
-    app.run(host='0.0.0.0', port=55000)
+    app.run(host='0.0.0.0', port=DEFAULT_PORT)
 
 def main():
     parser = argparse.ArgumentParser(description='Count lines, words, and characters in a text file')
@@ -115,6 +116,8 @@ def main():
                       help='Run as MCP server using HTTP transport')
     parser.add_argument('--api-key',
                       help='API key for HTTP server authentication')
+    parser.add_argument('--port', type=int, default=DEFAULT_PORT,
+                      help=f'Port for HTTP server (default: {DEFAULT_PORT})')
     parser.add_argument('file_path', nargs='?',
                       help='Path to the text file to analyze')
     
